@@ -1,7 +1,6 @@
 
 currentMovie = {};
 
-
 function getMovieInfo(title) {
   return $.ajax({
     url: "http://www.omdbapi.com/?t=" + title + "&y=&plot=short&r=json",
@@ -19,12 +18,12 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     case 'setMovie':
         getMovieInfo(request.message).done(function(response) {
             if(response.Response != "False") {
-                console.log(response);
                 setMovieInfo(response);    
             }
         });
         break;
     case 'resetBadge':
+        currentMovie = {};
         chrome.browserAction.setBadgeText({text: ""});
     default:
         break;
@@ -33,7 +32,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
 
 chrome.browserAction.onClicked.addListener(function(activeTab){
-    console.log(currentMovie);
-    url = "http://www.imdb.com/title/" +  currentMovie.imdbID;
-    chrome.tabs.create({ url: url });
+    if(!$.isEmptyObject(currentMovie)) {
+        url = "http://www.imdb.com/title/" +  currentMovie.imdbID;
+        chrome.tabs.create({ url: url });
+    }    
 });
