@@ -1,6 +1,7 @@
 {
 	"manifest_version": 2,
 	"name": "IMDB Lookup",
+	"description": "Simple and automatic IMDB movie rating.",
 	"version": "0.1",
 
 	"browser_action": {
@@ -20,14 +21,14 @@
  	],
  	
  	"background": {
- 		"scripts": ["assets/jquery-1.8.3.min.js", "background.js"]
+ 		"scripts": ["assets/jquery-1.8.3.min.js", "src/background.js"]
  	},
 	
 
  	"content_scripts": [
 		{
 			"matches": ["<all_urls>"],
-			"js": ["assets/jquery-1.8.3.min.js", "selection.js"],
+			"js": ["assets/jquery-1.8.3.min.js", "src/selection.js"],
 			"run_at": "document_start",
 			"all_frames": true
 		}
