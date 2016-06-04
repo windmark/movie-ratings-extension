@@ -10,13 +10,3 @@ document.addEventListener('mouseup',function(event) {
     	chrome.runtime.sendMessage({'method': 'resetBadge'})
     }
 });
-
-
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-	if (request.method == "getSelection") {
-		sendResponse({data: selectedText});
-		//sendResponse({data: window.getSelection().toString()});
-	} else {
-		sendResponse({});
-	}
-});
