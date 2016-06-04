@@ -12,13 +12,19 @@ function setMovieInfo(info) {
 }
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  if (request.method == "setMovie") {
-    getMovieInfo(request.message).done(function(response) {
-        if(response.Response != "False") {
-            console.log(response);
-            setMovieInfo(response);    
-        }
-    });
+  switch(request.method) {
+    case 'setMovie':
+        getMovieInfo(request.message).done(function(response) {
+            if(response.Response != "False") {
+                console.log(response);
+                setMovieInfo(response);    
+            }
+        });
+        break;
+    case 'resetBadge':
+        chrome.browserAction.setBadgeText({text: ""});
+    default:
+        break;
   }
 });
 

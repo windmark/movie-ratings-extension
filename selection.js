@@ -6,6 +6,8 @@ document.addEventListener('mouseup',function(event) {
     if(sel.length) {
 		selectedText = sel;
 		chrome.runtime.sendMessage({'method': 'setMovie', 'message': sel})
+    } else {
+    	chrome.runtime.sendMessage({'method': 'resetBadge'})
     }
 });
 
