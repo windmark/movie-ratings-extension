@@ -1,7 +1,20 @@
+
+var selectedText = "";
+
+document.addEventListener('mouseup',function(event) {
+    var sel = window.getSelection().toString();
+    if(sel.length) {
+		selectedText = sel;
+		chrome.runtime.sendMessage({'method': 'setMovie', 'message': sel})
+    }
+});
+
+
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	if (request.method == "getSelection") {
-		sendResponse({data: window.getSelection().toString()});
+		sendResponse({data: selectedText});
+		//sendResponse({data: window.getSelection().toString()});
 	} else {
-		sendResponse({}); // snub them.	
+		sendResponse({});
 	}
 });
