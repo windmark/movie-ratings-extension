@@ -1,3 +1,7 @@
+
+currentMovie = {};
+
+
 function getMovieInfo(title) {
   return $.ajax({
     url: "http://www.omdbapi.com/?t=" + title + "&y=&plot=short&r=json",
@@ -5,10 +9,8 @@ function getMovieInfo(title) {
 }
 
 function setMovieInfo(info) {
-  chrome.browserAction.setBadgeText({text: info.imdbRating});
-  //var textBox = document.getElementById('text');
-  //textBox.value = info.Title + " " + info.imdbRating;
-  
+    currentMovie = info;
+    chrome.browserAction.setBadgeText({text: info.imdbRating});
 }
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
@@ -28,3 +30,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   }
 });
 
+
+chrome.browserAction.onClicked.addListener(function(activeTab){
+    console.log(currentMovie);
+    url = "http://www.imdb.com/title/" +  currentMovie.imdbID;
+    chrome.tabs.create({ url: url });
+});
