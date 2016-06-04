@@ -10,6 +10,7 @@ function getMovieInfo(title) {
 
 function setMovieInfo(info) {
     currentMovie = info;
+    chrome.browserAction.setBadgeBackgroundColor({ color: [109, 109, 109, 255] });
     chrome.browserAction.setBadgeText({text: info.imdbRating});
 }
 
