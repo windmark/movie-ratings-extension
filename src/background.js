@@ -1,13 +1,13 @@
-//--- Google Analytics Tracking ---/
-var _analyticsCode = 'UA-XXXXXXXX-X';
+// Configurations loaded from config.js
 
 var _gaq = _gaq || [];
 _gaq.push(['_setAccount', _analyticsCode]);
 
 (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = 'https://ssl.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    //ga.src = 'https://ssl.google-analytics.com/ga.js';
+    ga.src = 'https://ssl.google-analytics.com/u/ga_debug.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 })();
 
 //////////////////////////
@@ -36,7 +36,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             if(response.Response != "False") {
                 setMovieInfo(response);
 
-                _gaq.push(['_trackEvent', 'movie-search']);  
+                _gaq.push(['_trackEvent', 'movie-search', 'fired']);  
             }
         });
         break;
@@ -51,10 +51,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
 chrome.browserAction.onClicked.addListener(function(activeTab){
     if(!$.isEmptyObject(currentMovie)) {
+        _gaq.push(['_trackEvent', 'badge-click', 'clicked']);
         var url = "http://www.imdb.com/title/" +  currentMovie.imdbID;
         chrome.tabs.create({ url: url });
-
-        _gaq.push(['_trackEvent', 'badge-click']);
     }    
 });
 
