@@ -1,0 +1,15 @@
+body {
+	padding: 10px;
+}
+
+section {
+	margin-bottom: 20px;
+}
+
+#status {
+	min-height: 15px;
+}
+
+.label {
+	padding-right: 15px;
+}

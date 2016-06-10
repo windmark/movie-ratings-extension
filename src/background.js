@@ -5,17 +5,34 @@ _gaq.push(['_setAccount', _analyticsCode]);
 
 (function() {
     var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    //ga.src = 'https://ssl.google-analytics.com/ga.js';
-    ga.src = 'https://ssl.google-analytics.com/u/ga_debug.js';
+    ga.src = 'https://ssl.google-analytics.com/ga.js';
+    //ga.src = 'https://ssl.google-analytics.com/u/ga_debug.js';
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 })();
 
+chrome.storage.sync.get({
+    badgeMode: 'normal',
+}, function(items) {
+    badgeMode = items.badgeMode;
+});
+
+
+chrome.storage.onChanged.addListener(function(changes, namespace) {
+    for (key in changes) {
+      var storageChange = changes[key];
+      if(key == 'badgeMode') {
+        badgeMode = storageChange.newValue;
+      }
+    }
+});
+
+
+
 //////////////////////////
 
-
-
-
 currentMovie = {};
+
+
 
 function getMovieInfo(title) {
   return $.ajax({
@@ -25,9 +42,44 @@ function getMovieInfo(title) {
 
 function setMovieInfo(info) {
     currentMovie = info;
-    chrome.browserAction.setBadgeBackgroundColor({ color: [109, 109, 109, 255] });
-    chrome.browserAction.setBadgeText({text: info.imdbRating});
+
+    if(badgeMode == 'minimal') {
+        drawIcon(info.imdbRating)  
+    } else {
+        chrome.browserAction.setBadgeBackgroundColor({ color: [85, 85, 85, 255] });
+        chrome.browserAction.setBadgeText({text: info.imdbRating});
+    }
 }
+
+
+function drawIcon(text, reset) {
+    var canvas = document.createElement('canvas');
+    canvas.width = 19;
+    canvas.height = 19;
+
+    var context = canvas.getContext('2d');
+    context.fillStyle = "#000000";
+    context.textAlign = "center";
+    context.textBaseline = "middle";
+
+    if(text == "10.0" || text == "N/A") {
+        context.font = "11px Arial";
+        context.fillText(text, 9, 12);    
+    } else {
+        context.font = "14px Arial";
+        context.fillText(text, 10, 12);
+    }
+
+    chrome.browserAction.setIcon({
+        imageData: context.getImageData(0, 0, 19, 19)
+    });
+}
+
+function resetIcon() {
+    chrome.browserAction.setIcon({path:"assets/icon.png"});
+    chrome.browserAction.setBadgeText({text: ""});
+}
+
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   switch(request.method) {
@@ -42,7 +94,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         break;
     case 'resetBadge':
         currentMovie = {};
-        chrome.browserAction.setBadgeText({text: ""});
+        resetIcon();
     default:
         break;
   }
