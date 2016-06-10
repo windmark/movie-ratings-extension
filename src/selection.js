@@ -1,5 +1,6 @@
 document.addEventListener('mouseup',function(event) {
-    var sel = window.getSelection().toString();
+    var sel = $.trim(window.getSelection().toString());
+    
     if(sel.length) {
 		chrome.runtime.sendMessage({'method': 'setMovie', 'message': sel})
     } else {
