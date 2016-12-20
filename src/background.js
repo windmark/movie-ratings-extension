@@ -32,12 +32,14 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
 
 currentMovie = {};
 
+function getMovieInfo(details) {
+    title = details['title'].replace(/ /g, "+")
+    year = details['year']
+    requestUrl = "http://www.omdbapi.com/?t=" + title + "&y=" + year + "&plot=short&r=json"
 
-
-function getMovieInfo(title) {
-  return $.ajax({
-    url: "http://www.omdbapi.com/?t=" + title + "&y=&plot=short&r=json",
-  });
+    return $.ajax({
+        url: requestUrl
+    });
 }
 
 function setMovieInfo(info) {
@@ -50,7 +52,6 @@ function setMovieInfo(info) {
         chrome.browserAction.setBadgeText({text: info.imdbRating});
     }
 }
-
 
 function drawIcon(text, reset) {
     var canvas = document.createElement('canvas');
