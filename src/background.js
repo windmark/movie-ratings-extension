@@ -89,26 +89,26 @@ function resetIcon() {
 
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  switch(request.method) {
-    case 'setMovie':
-        getMovieInfo(request.message).done(function(response) {
-            if(response.Response != "False" && response.imdbRating != "N/A") {
-                setMovieInfo(response);
+    console.log(request)
+    switch(request.method) {
+        case 'setMovie':
+            getMovieInfo(request.message).done(function(response) {
+                if(response.Response != "False" && response.imdbRating != "N/A") {
+                    setMovieInfo(response);
 
-                _gaq.push(['_trackEvent', 'movie-search', 'fired']);  
-            } else {
-                setSearch(request.message)
-            }
-        });
-        break;
-    case 'resetBadge':
-        currentMovie = {};
-        resetIcon();
-    default:
-        break;
-  }
+                    _gaq.push(['_trackEvent', 'movie-search', 'fired']);
+                } else {
+                    setSearch(request.message)
+                }
+            });
+            break;
+        case 'resetBadge':
+            currentMovie = {};
+            resetIcon();
+        default:
+            break;
+    }
 });
-
 
 chrome.browserAction.onClicked.addListener(function(activeTab){
     if(!$.isEmptyObject(currentMovie)) {
@@ -118,4 +118,16 @@ chrome.browserAction.onClicked.addListener(function(activeTab){
     }    
 });
 
+chrome.contextMenus.create({
+    "id": "context",
+    "title": "Search on IMDb",
+    "contexts": ["selection", "link"]
+});
 
+chrome.contextMenus.onClicked.addListener(function(info, tab) {
+    var sel = info.selectionText;
+    var movieInfo = processSelection(sel)
+    var url = "http://www.imdb.com/find?q=" + movieInfo.title + "&s=all"
+    _gaq.push(['_trackEvent', 'context-click', 'clicked']);
+    chrome.tabs.create({ url: url });
+});
