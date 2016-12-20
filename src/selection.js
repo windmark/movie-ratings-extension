@@ -1,9 +1,9 @@
 document.addEventListener('mouseup',function(event) {
     var sel = $.trim(window.getSelection().toString());
-    message = processSelection(sel)
+    movieInfo = processSelection(sel)
 
     if(sel.length) {
-		chrome.runtime.sendMessage({'method': 'setMovie', 'message': message})
+		chrome.runtime.sendMessage({'method': 'setMovie', 'message': movieInfo})
     } else {
     	chrome.runtime.sendMessage({'method': 'resetBadge'})
     }
