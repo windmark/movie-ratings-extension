@@ -92,7 +92,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   switch(request.method) {
     case 'setMovie':
         getMovieInfo(request.message).done(function(response) {
-            console.log(response)
             if(response.Response != "False" && response.imdbRating != "N/A") {
                 setMovieInfo(response);
 
