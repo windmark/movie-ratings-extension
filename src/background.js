@@ -44,36 +44,42 @@ function getMovieInfo(details) {
 
 function setMovieInfo(info) {
     currentMovie = info;
+    currentMovie.url = "http://www.imdb.com/title/" +  info.imdbID;
+    drawIcon(info.imdbRating)
+}
 
-    if(badgeMode == 'minimal') {
-        drawIcon(info.imdbRating)  
-    } else {
-        chrome.browserAction.setBadgeBackgroundColor({ color: [85, 85, 85, 255] });
-        chrome.browserAction.setBadgeText({text: info.imdbRating});
-    }
+function setSearch(requestInfo) {
+    currentMovie.url = "http://www.imdb.com/find?q=" + requestInfo.title + "&s=all"
+    drawIcon("N/A")
+
 }
 
 function drawIcon(text, reset) {
-    var canvas = document.createElement('canvas');
-    canvas.width = 19;
-    canvas.height = 19;
+    if(badgeMode == 'minimal') {
+        var canvas = document.createElement('canvas');
+        canvas.width = 19;
+        canvas.height = 19;
 
-    var context = canvas.getContext('2d');
-    context.fillStyle = "#000000";
-    context.textAlign = "center";
-    context.textBaseline = "middle";
+        var context = canvas.getContext('2d');
+        context.fillStyle = "#000000";
+        context.textAlign = "center";
+        context.textBaseline = "middle";
 
-    if(text == "10.0" || text == "N/A") {
-        context.font = "11px Arial";
-        context.fillText(text, 9, 12);    
+        if(text == "10.0" || text == "N/A") {
+            context.font = "11px Arial";
+            context.fillText(text, 9, 12);
+        } else {
+            context.font = "14px Arial";
+            context.fillText(text, 10, 12);
+        }
+
+        chrome.browserAction.setIcon({
+            imageData: context.getImageData(0, 0, 19, 19)
+        });
     } else {
-        context.font = "14px Arial";
-        context.fillText(text, 10, 12);
+        chrome.browserAction.setBadgeBackgroundColor({ color: [85, 85, 85, 255] });
+        chrome.browserAction.setBadgeText({text: text});
     }
-
-    chrome.browserAction.setIcon({
-        imageData: context.getImageData(0, 0, 19, 19)
-    });
 }
 
 function resetIcon() {
@@ -86,10 +92,13 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   switch(request.method) {
     case 'setMovie':
         getMovieInfo(request.message).done(function(response) {
-            if(response.Response != "False") {
+            console.log(response)
+            if(response.Response != "False" && response.imdbRating != "N/A") {
                 setMovieInfo(response);
 
                 _gaq.push(['_trackEvent', 'movie-search', 'fired']);  
+            } else {
+                setSearch(request.message)
             }
         });
         break;
@@ -105,7 +114,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 chrome.browserAction.onClicked.addListener(function(activeTab){
     if(!$.isEmptyObject(currentMovie)) {
         _gaq.push(['_trackEvent', 'badge-click', 'clicked']);
-        var url = "http://www.imdb.com/title/" +  currentMovie.imdbID;
+        var url = currentMovie.url
         chrome.tabs.create({ url: url });
     }    
 });
