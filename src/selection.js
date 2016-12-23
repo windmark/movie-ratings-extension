@@ -6,9 +6,10 @@ eventList = ['mouseup', 'contextmenu']
 eventList.forEach(function(eventName) {
 	document.addEventListener(eventName,function(event) {
 		var sel = $.trim(window.getSelection().toString());
-		movieInfo = processSelection(sel)
+		var node = window.getSelection().focusNode.nodeValue;
 
 		if(sel.length) {
+			movieInfo = processSelection(node)
 			chrome.runtime.sendMessage({'method': 'setMovie', 'message': movieInfo})
 		} else {
 			chrome.runtime.sendMessage({'method': 'resetBadge'})

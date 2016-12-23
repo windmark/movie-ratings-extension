@@ -25,5 +25,8 @@ function processSelection(sel) {
         title = title.substring(0, matchedIndex - episode.length)
     }
 
+    title = $.trim(title)
+    year = $.trim(year)
+
     return {"title": title, "year": year}
 }
