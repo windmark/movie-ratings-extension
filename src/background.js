@@ -89,7 +89,6 @@ function resetIcon() {
 
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    console.log(request)
     switch(request.method) {
         case 'setMovie':
             getMovieInfo(request.message).done(function(response) {
