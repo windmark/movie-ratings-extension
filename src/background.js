@@ -114,7 +114,11 @@ chrome.browserAction.onClicked.addListener(function(activeTab){
         _gaq.push(['_trackEvent', 'badge-click', 'clicked']);
         var url = currentMovie.url
         chrome.tabs.create({ url: url });
-    }    
+    } else {
+        _gaq.push(['_trackEvent', 'badge-click', 'empty-clicked']);
+        var url = "http://www.imdb.com/find?q=&s=all"
+        chrome.tabs.create({ url: url });
+    }
 });
 
 chrome.contextMenus.create({
