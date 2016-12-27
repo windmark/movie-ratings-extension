@@ -4,7 +4,7 @@
 	"name": "IMDb Movie Rating Lookup",
 	"description": "Simple IMDb movie rating by selecting text.",
 	"author": "Marcus Windmark",
-	"version": "0.2.1",
+	"version": "0.2.2",
 	
 	"browser_action": {
 		"default_icon": "assets/icon.png"
