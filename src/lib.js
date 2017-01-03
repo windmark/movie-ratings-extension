@@ -1,11 +1,11 @@
 function processSelection(sel) {
     var title = ""
     var yearList = []
-    var yearRegex = /\d{4}/g;
+    var yearRegex = /\d{4}[^a-zA-Z]/g;
     var episodeRegex = /s[0-9]*e[0-9]*/gi;
 
     while(yearRegex.test(sel) == true) {
-        matchedIndex = yearRegex.lastIndex - 4
+        matchedIndex = yearRegex.lastIndex - 5
         year = sel.substr(matchedIndex, 4)
         yearList.push([year, matchedIndex])
     }
