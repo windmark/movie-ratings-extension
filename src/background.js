@@ -37,9 +37,10 @@ function getMovieInfo(details) {
     year = details['year']
     requestUrl = "http://www.omdbapi.com/?t=" + title + "&y=" + year + "&plot=short&r=json"
 
-    return $.ajax({
+    var response = $.ajax({
         url: requestUrl
     });
+    return response
 }
 
 function setMovieInfo(info) {
@@ -91,14 +92,22 @@ function resetIcon() {
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     switch(request.method) {
         case 'setMovie':
-            getMovieInfo(request.message).done(function(response) {
+            getMovieInfo(request.message.default).done(function(response) {
                 if(response.Response != "False" && response.imdbRating != "N/A") {
                     setMovieInfo(response);
-
                     _gaq.push(['_trackEvent', 'movie-search', 'fired']);
                 } else {
                     setSearch(request.message)
                 }
+            }).error(function() {
+                getMovieInfo(request.message.fallback).done(function(response) {
+                    if(response.Response != "False" && response.imdbRating != "N/A") {
+                        setMovieInfo(response);
+                        _gaq.push(['_trackEvent', 'movie-search', 'fired']);
+                    } else {
+                        setSearch(request.message)
+                    }
+                });
             });
             break;
         case 'resetBadge':
