@@ -107,11 +107,11 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
                     _gaq.push(['_trackEvent', 'movie-search', 'fired']);
                 } else {
                     getMovieInfo(request.message.fallback).done(function(fallbackResponse) {
-                        if(fallbackResponse.Response != "False" && fallbackResponse.imdbRating != "N/A") {
+                        if(fallbackResponse.Response != "False") {
                             setMovieInfo(fallbackResponse);
                             _gaq.push(['_trackEvent', 'movie-search', 'fired']);
                         } else {
-                            setSearch(request.message)
+                            setSearch(request.message.default)
                         }
                     });
                 }
@@ -121,7 +121,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
                         setMovieInfo(response);
                         _gaq.push(['_trackEvent', 'movie-search', 'fired']);
                     } else {
-                        setSearch(request.message)
+                        setSearch(request.message.default)
                     }
                 });
             });
