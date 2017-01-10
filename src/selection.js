@@ -8,10 +8,14 @@ eventList.forEach(function(eventName) {
 		var sel = $.trim(window.getSelection().toString());
 
 		if(sel.length) {
-			var node = window.getSelection().focusNode.nodeValue;
-			var movieInfo = processSelection(node)
+			var node = window.getSelection().focusNode.nodeValue
+			var movieInfo = null
+			
+			if(node) {
+				movieInfo = processSelection(node)
+			}
+			
 			var fallbackInfo = processSelection(sel)
-
 			chrome.runtime.sendMessage({'method': 'setMovie', 'message': {'default': movieInfo, 'fallback': fallbackInfo}})
 		} else {
 			chrome.runtime.sendMessage({'method': 'resetBadge'})
