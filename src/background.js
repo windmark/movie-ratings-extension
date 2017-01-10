@@ -54,6 +54,7 @@ function setMovieInfo(info) {
     currentMovie = info;
     currentMovie.url = "http://www.imdb.com/title/" +  info.imdbID;
     drawIcon(info.imdbRating)
+    chrome.browserAction.setTitle({title: info.Title + ' ' + info.Year})
 }
 
 function setSearch(requestInfo) {
@@ -93,6 +94,7 @@ function drawIcon(text, reset) {
 function resetIcon() {
     chrome.browserAction.setIcon({path:"assets/icon.png"});
     chrome.browserAction.setBadgeText({text: ""});
+    chrome.browserAction.setTitle({title: ""})
 }
 
 
