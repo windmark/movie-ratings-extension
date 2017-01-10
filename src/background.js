@@ -35,7 +35,14 @@ currentMovie = {};
 function getMovieInfo(details) {
     title = details['title'].replace(/ /g, "+")
     year = details['year']
-    requestUrl = "http://www.omdbapi.com/?t=" + title + "&y=" + year + "&plot=short&r=json"
+    type = ""
+
+    if(details['episode']) {
+        type = "series"
+    }
+
+    requestUrl = "http://www.omdbapi.com/?t=" + title + "&y=" + year 
+        + "&type=" + type + "&plot=short&r=json"
 
     var response = $.ajax({
         url: requestUrl

@@ -1,5 +1,6 @@
 function processSelection(sel) {
     var title = ""
+    var episode = ""
     var yearList = []
     var yearRegex = /\d{4}[^a-zA-Z]/g;
     var episodeRegex = /s[0-9]+e[0-9]+/gi;
@@ -28,5 +29,5 @@ function processSelection(sel) {
     title = $.trim(title.replace('|', ''))
     year = $.trim(year)
 
-    return {"title": title, "year": year}
+    return {"title": title, "year": year, "episode": episode}
 }
