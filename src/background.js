@@ -100,15 +100,22 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     switch(request.method) {
         case 'setMovie':
             getMovieInfo(request.message.default).done(function(response) {
-                if(response.Response != "False" && response.imdbRating != "N/A") {
+                if(response.Response != "False") {
                     setMovieInfo(response);
                     _gaq.push(['_trackEvent', 'movie-search', 'fired']);
                 } else {
-                    setSearch(request.message)
+                    getMovieInfo(request.message.fallback).done(function(fallbackResponse) {
+                        if(fallbackResponse.Response != "False" && fallbackResponse.imdbRating != "N/A") {
+                            setMovieInfo(fallbackResponse);
+                            _gaq.push(['_trackEvent', 'movie-search', 'fired']);
+                        } else {
+                            setSearch(request.message)
+                        }
+                    });
                 }
             }).error(function() {
                 getMovieInfo(request.message.fallback).done(function(response) {
-                    if(response.Response != "False" && response.imdbRating != "N/A") {
+                    if(response.Response != "False"){
                         setMovieInfo(response);
                         _gaq.push(['_trackEvent', 'movie-search', 'fired']);
                     } else {
