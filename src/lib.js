@@ -25,8 +25,9 @@ function processSelection(sel) {
         episode = episodeRegex.exec(title)[0]
         title = title.substring(0, matchedIndex - episode.length)
     }
-
-    title = $.trim(title.replace('|', ''))
+    if(title) {
+        title = $.trim(title.replace('|', ''))    
+    }
     year = $.trim(year)
 
     return {"title": title, "year": year, "episode": episode}
