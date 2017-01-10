@@ -4,6 +4,9 @@ function processSelection(sel) {
     var yearList = []
     var yearRegex = /\d{4}[^a-zA-Z]/g;
     var episodeRegex = /s[0-9]+e[0-9]+/gi;
+    var regionRegex = /US|UK/g;
+
+    var sel = sel.replace(regionRegex, '')
 
     while(yearRegex.test(sel) == true) {
         matchedIndex = yearRegex.lastIndex - 5
