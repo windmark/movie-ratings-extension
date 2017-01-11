@@ -50,11 +50,15 @@ function getMovieInfo(details) {
     return response
 }
 
-function setMovieInfo(info) {
+function setMovieInfo(info, overrideContextMenu = false) {
     currentMovie = info;
     currentMovie.url = "http://www.imdb.com/title/" +  info.imdbID;
     drawIcon(info.imdbRating)
     chrome.browserAction.setTitle({title: info.Title + ' ' + info.Year})
+
+    if(overrideContextMenu) {
+        currentMovie['search-movie-info'] = true
+    }
 }
 
 function setSearch(requestInfo) {
@@ -104,12 +108,12 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         case 'setMovie':
             getMovieInfo(request.message.default).done(function(response) {
                 if(response.Response != "False") {
-                    setMovieInfo(response);
+                    setMovieInfo(response, request.message.default['search-movie-info']);
                     _gaq.push(['_trackEvent', 'movie-search', 'fired']);
                 } else {
                     getMovieInfo(request.message.fallback).done(function(fallbackResponse) {
                         if(fallbackResponse.Response != "False") {
-                            setMovieInfo(fallbackResponse);
+                            setMovieInfo(fallbackResponse, request.message.default['search-movie-info']);
                             _gaq.push(['_trackEvent', 'movie-search', 'fired']);
                         } else {
                             setSearch(request.message.default)
@@ -165,7 +169,16 @@ chrome.contextMenus.removeAll(function() {
 chrome.contextMenus.onClicked.addListener(function(info, tab) {
     var sel = info.selectionText;
     var movieInfo = processSelection(sel)
-    var url = "http://www.imdb.com/find?q=" + movieInfo.title + "&s=all"
+    var urlBase = "http://www.imdb.com/find?q="
+
+    if(currentMovie['search-movie-info']) {
+        url = urlBase + currentMovie.Title + "&s=all"
+    } else if(movieInfo.title) {
+        url =  urlBase + movieInfo.title + "&s=all"
+    } else {
+        url = urlBase + "&s=all"
+    }
+
     _gaq.push(['_trackEvent', 'context-click', 'clicked']);
-    chrome.tabs.create({ url: url });
+    chrome.tabs.create({ url: url });  
 });
