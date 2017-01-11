@@ -3,11 +3,11 @@ function processSelection(sel) {
     var episode = ""
     var yearList = []
     var yearRegex = /\d{4}[^a-zA-Z]/g;
-    var episodeRegex = /s[0-9]+e[0-9]+/gi;
+    var episodeRegex = /s[0-9]+.{1}e[0-9]+/gi;
     var regionRegex = /US|UK/g;
 
     if(sel) {
-        var sel = sel.replace(regionRegex, '')
+        sel = sel.replace(regionRegex, '')
     }
 
     while(yearRegex.test(sel) == true) {
