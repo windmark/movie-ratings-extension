@@ -159,7 +159,7 @@ chrome.browserAction.onClicked.addListener(function(activeTab){
 chrome.contextMenus.removeAll(function() {
     chrome.contextMenus.create({
         "id": "searchImdb",
-        "title": "Search IMDb for '%s'",
+        "title": "Search %s on IMDb",
         "contexts": ["selection", "link"]
     });
 });
