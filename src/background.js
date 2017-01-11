@@ -95,6 +95,7 @@ function resetIcon() {
     chrome.browserAction.setIcon({path:"assets/icon.png"});
     chrome.browserAction.setBadgeText({text: ""});
     chrome.browserAction.setTitle({title: ""})
+
 }
 
 
@@ -129,10 +130,13 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         case 'resetBadge':
             currentMovie = {};
             resetIcon();
+            break;
         default:
             break;
     }
 });
+
+
 
 chrome.browserAction.onClicked.addListener(function(activeTab){
     if(!$.isEmptyObject(currentMovie)) {
@@ -146,11 +150,17 @@ chrome.browserAction.onClicked.addListener(function(activeTab){
     }
 });
 
-chrome.contextMenus.create({
-    "id": "context",
-    "title": "Search on IMDb",
-    "contexts": ["selection", "link"]
+
+
+chrome.contextMenus.removeAll(function() {
+    chrome.contextMenus.create({
+        "id": "searchImdb",
+        "title": "Search IMDb for '%s'",
+        "contexts": ["selection", "link"]
+    });
 });
+
+
 
 chrome.contextMenus.onClicked.addListener(function(info, tab) {
     var sel = info.selectionText;
