@@ -42,7 +42,7 @@ function getMovieInfo(details) {
     }
 
     requestUrl = "http://www.omdbapi.com/?t=" + title + "&y=" + year 
-        + "&type=" + type + "&plot=short&r=json"
+        + "&type=" + type + "&apikey=" + _omdbApiKey + "&plot=short&r=json"
 
     var response = $.ajax({
         url: requestUrl
