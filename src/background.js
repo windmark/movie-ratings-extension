@@ -149,7 +149,7 @@ chrome.browserAction.onClicked.addListener(function(activeTab){
         chrome.tabs.create({ url: url });
     } else {
         _gaq.push(['_trackEvent', 'badge-click', 'empty-clicked']);
-        var url = "http://www.imdb.com/find?q=&s=all"
+        var url = "http://www.imdb.com"
         chrome.tabs.create({ url: url });
     }
 });
