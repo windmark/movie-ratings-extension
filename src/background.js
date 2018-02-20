@@ -13,10 +13,12 @@ _gaq.push(['_setAccount', _analyticsCode]);
 
 chrome.storage.sync.get({
     badgeMode: 'normal',
-    fallbackSearch: 'fallback-deactivated'
+    fallbackSearch: 'fallback-deactivated',
+    openNewTab: 'new-tab-activated'
 }, function(items) {
     badgeMode = items.badgeMode;
     fallbackSearch = items.fallbackSearch;
+    openNewTab = items.openNewTab
 });
 
 
@@ -27,6 +29,8 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
         badgeMode = storageChange.newValue;
       } else if(key == 'fallbackSearch') {
         fallbackSearch = storageChange.newValue;
+      } else if(key == 'openNewTab') {
+        openNewTab = storageChange.newValue;
       }
     }
 });
@@ -111,14 +115,17 @@ function resetIcon() {
 
 
 function triggerBrowserAction() {
+    var url = "http://www.imdb.com"
     if(!$.isEmptyObject(currentMovie)) {
         _gaq.push(['_trackEvent', 'badge-click', 'clicked']);
-        var url = currentMovie.url
-        chrome.tabs.create({ url: url });
+        url = currentMovie.url
     } else {
         _gaq.push(['_trackEvent', 'badge-click', 'empty-clicked']);
-        var url = "http://www.imdb.com"
+    }
+    if(openNewTab == 'new-tab-activated') {
         chrome.tabs.create({ url: url });
+    } else {
+        chrome.tabs.update({url: url});
     }
 }
 
@@ -196,7 +203,12 @@ chrome.contextMenus.onClicked.addListener(function(info, tab) {
     }
 
     _gaq.push(['_trackEvent', 'context-click', 'clicked']);
-    chrome.tabs.create({ url: url });  
+
+    if(openNewTab == 'new-tab-activated') {
+        chrome.tabs.create({ url: url });
+    } else {
+        chrome.tabs.update({url: url});
+    }
 });
 
 

@@ -1,10 +1,12 @@
 function save_options() {
   var badgeMode = document.getElementById('badgeMode').value;
   var fallbackSearch = document.getElementById('fallbackSearch').value;
+  var openNewTab = document.getElementById('openNewTab').value;
   
   chrome.storage.sync.set({
     badgeMode: badgeMode,
-    fallbackSearch: fallbackSearch
+    fallbackSearch: fallbackSearch,
+    openNewTab: openNewTab
   }, function() {
     var status = document.getElementById('save');
     status.textContent = 'Saved successfully.';
@@ -18,10 +20,12 @@ function save_options() {
 function restore_options() {
   chrome.storage.sync.get({
     badgeMode: 'normal',
-    fallbackSearch: 'fallback-deactivated'
+    fallbackSearch: 'fallback-deactivated',
+    openNewTab: 'new-tab-activated'
   }, function(items) {
     document.getElementById('badgeMode').value = items.badgeMode;
     document.getElementById('fallbackSearch').value = items.fallbackSearch;
+    document.getElementById('openNewTab').value = items.openNewTab;
   });
 }
 
