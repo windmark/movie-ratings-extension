@@ -4,12 +4,12 @@ function save_options() {
   chrome.storage.sync.set({
     badgeMode: badgeMode,
   }, function() {
-    var status = document.getElementById('status');
+    var status = document.getElementById('save');
     status.textContent = 'Saved successfully.';
     
     setTimeout(function() {
-      status.textContent = '';
-    }, 1800);
+      status.textContent = 'Save';
+    }, 3000);
   });
 }
 
