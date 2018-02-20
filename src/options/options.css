@@ -2,7 +2,7 @@ body {
 	padding: 10px;
 }
 
-#main {
+.options {
 	margin-bottom: 20px;
 }
 
@@ -11,5 +11,14 @@ body {
 }
 
 .label {
-	padding-right: 15px;
+	font-size: 14px;
+	font-style: bold;
+	display: block;
+}
+
+.label-explanation {
+	font-size: 12px;
+	font-style: italic;
+	display: block;
+	margin-bottom: 5px;
 }

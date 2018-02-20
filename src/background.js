@@ -10,10 +10,13 @@ _gaq.push(['_setAccount', _analyticsCode]);
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 })();
 
+
 chrome.storage.sync.get({
     badgeMode: 'normal',
+    fallbackSearch: 'fallback-deactivated'
 }, function(items) {
     badgeMode = items.badgeMode;
+    fallbackSearch = items.fallbackSearch;
 });
 
 
@@ -22,10 +25,11 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
       var storageChange = changes[key];
       if(key == 'badgeMode') {
         badgeMode = storageChange.newValue;
+      } else if(key == 'fallbackSearch') {
+        fallbackSearch = storageChange.newValue;
       }
     }
 });
-
 
 
 //////////////////////////
@@ -50,6 +54,7 @@ function getMovieInfo(details) {
     return response
 }
 
+
 function setMovieInfo(info, overrideContextMenu = false) {
     currentMovie = info;
     currentMovie.url = "http://www.imdb.com/title/" +  info.imdbID;
@@ -61,11 +66,13 @@ function setMovieInfo(info, overrideContextMenu = false) {
     }
 }
 
+
 function setSearch(requestInfo) {
     currentMovie.url = "http://www.imdb.com/find?q=" + requestInfo.title + "&s=all"
     drawIcon("N/A")
 
 }
+
 
 function drawIcon(text, reset) {
     if(badgeMode == 'minimal') {
@@ -95,12 +102,13 @@ function drawIcon(text, reset) {
     }
 }
 
+
 function resetIcon() {
     chrome.browserAction.setIcon({path:"assets/icon.png"});
     chrome.browserAction.setBadgeText({text: ""});
     chrome.browserAction.setTitle({title: ""})
-
 }
+
 
 function triggerBrowserAction() {
     if(!$.isEmptyObject(currentMovie)) {
@@ -115,32 +123,38 @@ function triggerBrowserAction() {
 }
 
 
+function performSearchRequest(movieSelectionDetails) {
+    getMovieInfo(movieSelectionDetails).done(function(response) {
+        if(response.Response != "False"){
+            setMovieInfo(response);
+            _gaq.push(['_trackEvent', 'movie-search', 'fired']);
+        } else {
+            setSearch(request.message.default)
+        }
+    });
+}
+
+
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    // Fallback searches the raw selected text if the OMDb request fails. This can be unreliable
+    // and is best inactivated for best user experience. This option is changed in the options page.
     switch(request.method) {
         case 'setMovie':
             getMovieInfo(request.message.default).done(function(response) {
                 if(response.Response != "False") {
                     setMovieInfo(response, request.message.default['search-movie-info']);
                     _gaq.push(['_trackEvent', 'movie-search', 'fired']);
+                } else if(fallbackSearch == 'fallback-activated') {
+                    performSearchRequest(request.message.fallback)
                 } else {
-                    getMovieInfo(request.message.fallback).done(function(fallbackResponse) {
-                        if(fallbackResponse.Response != "False") {
-                            setMovieInfo(fallbackResponse, request.message.default['search-movie-info']);
-                            _gaq.push(['_trackEvent', 'movie-search', 'fired']);
-                        } else {
-                            setSearch(request.message.default)
-                        }
-                    });
+                    setSearch(request.message.default)
                 }
             }).error(function() {
-                getMovieInfo(request.message.fallback).done(function(response) {
-                    if(response.Response != "False"){
-                        setMovieInfo(response);
-                        _gaq.push(['_trackEvent', 'movie-search', 'fired']);
-                    } else {
-                        setSearch(request.message.default)
-                    }
-                });
+                if(fallbackSearch == 'fallback-activated') {
+                    performSearchRequest(request.message.fallback)
+                } else {
+                    setSearch(request.message.default)
+                }
             });
             break;
         case 'resetBadge':
@@ -151,7 +165,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             break;
     }
 });
-
 
 
 chrome.browserAction.onClicked.addListener(function(activeTab){
@@ -167,7 +180,6 @@ chrome.contextMenus.removeAll(function() {
         "contexts": ["selection", "link"]
     });
 });
-
 
 
 chrome.contextMenus.onClicked.addListener(function(info, tab) {
@@ -186,7 +198,6 @@ chrome.contextMenus.onClicked.addListener(function(info, tab) {
     _gaq.push(['_trackEvent', 'context-click', 'clicked']);
     chrome.tabs.create({ url: url });  
 });
-
 
 
 chrome.commands.onCommand.addListener(function(command) {

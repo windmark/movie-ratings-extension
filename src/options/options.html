@@ -6,14 +6,27 @@
 </head>
 
 <body>
-	<section id="main">
-		<span class="label">Badge Mode:</span>
-		
-		<select id="badgeMode">
-			<option value="normal">Normal</option>
-			<option value="minimal">Minimalistic</option>
-		</select>
-	</section>
+	<div class="main">
+		<section class="options">
+			<span class="label">Badge Mode</span>
+			<span class="label-explanation">Select menu icon style</span>
+			
+			<select id="badgeMode">
+				<option value="normal">Normal</option>
+				<option value="minimal">Minimalistic</option>
+			</select>
+		</section>
+
+		<section class="options">
+			<span class="label">Fallback Search</span>
+			<span class="label-explanation">Automatically search IMDb for selected text if no results from intelligent title parser. Note: This may lead to confusing ratings of non-related titles</span>
+			
+			<select id="fallbackSearch">
+				<option value="fallback-deactivated">Deactivated</option>
+				<option value="fallback-activated">Activated</option>
+			</select>
+		</section>
+	</div>
 
 	<section>
 		<span><i>Note: Keyboard shortcuts are found at the bottom of Chrome's extension page.</i></span>
