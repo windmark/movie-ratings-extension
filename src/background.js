@@ -102,6 +102,18 @@ function resetIcon() {
 
 }
 
+function triggerBrowserAction() {
+    if(!$.isEmptyObject(currentMovie)) {
+        _gaq.push(['_trackEvent', 'badge-click', 'clicked']);
+        var url = currentMovie.url
+        chrome.tabs.create({ url: url });
+    } else {
+        _gaq.push(['_trackEvent', 'badge-click', 'empty-clicked']);
+        var url = "http://www.imdb.com"
+        chrome.tabs.create({ url: url });
+    }
+}
+
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     switch(request.method) {
@@ -143,15 +155,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
 
 chrome.browserAction.onClicked.addListener(function(activeTab){
-    if(!$.isEmptyObject(currentMovie)) {
-        _gaq.push(['_trackEvent', 'badge-click', 'clicked']);
-        var url = currentMovie.url
-        chrome.tabs.create({ url: url });
-    } else {
-        _gaq.push(['_trackEvent', 'badge-click', 'empty-clicked']);
-        var url = "http://www.imdb.com"
-        chrome.tabs.create({ url: url });
-    }
+    triggerBrowserAction();
 });
 
 
@@ -181,4 +185,16 @@ chrome.contextMenus.onClicked.addListener(function(info, tab) {
 
     _gaq.push(['_trackEvent', 'context-click', 'clicked']);
     chrome.tabs.create({ url: url });  
+});
+
+
+
+chrome.commands.onCommand.addListener(function(command) {
+    switch(command) {
+        case 'browserActionShortcut':
+            triggerBrowserAction();
+            _gaq.push(['_trackEvent', 'browser-action-shortcut-pressed', 'fired']);
+        default:
+            break;
+    }
 });
